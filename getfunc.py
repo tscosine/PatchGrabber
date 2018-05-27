@@ -5,13 +5,13 @@ import yaml
 def getName(function):
 	return re.split(r'\(|;',function)[0]
 def getFuncionName(folderpath):
-	pattern=re.compile(r'(?:static )?(?:inline )?\w+ \*?\w+')
+	pattern=re.compile(r'(?:static )?(?:inline )?(?:unsigned)?\w+ \*?\w+')
 	diffstr=open(os.path.join(folderpath,'diff.txt')).read()
 	function=re.split(r'@@ ',diffstr)
 	functionname=[]
 	for f in function:
 		name = getName(f)
-		if(re.match(pattern,name)):
+		if(re.match(pattern,name) and not re.search(r'struct',name)):
 			functionname.append(getName(f))
 	functionname=list(set(functionname))#remove the same name
 	return functionname
@@ -61,14 +61,14 @@ def getTargetFolder(path):
 				result.append(r)
 	return result
 if __name__=='__main__':
-	testfile=open('/home/cosine/Desktop/filename.txt','a')
+	# testfile=open('/home/cosine/Desktop/filename.txt','a')
 	with open('./config.yml') as f:
 		config=yaml.load(f.read())
 	targetfolder=getTargetFolder(config['path']['output'])
 	for tar in targetfolder:
 		functionname=getFuncionName(tar)
-		for name in functionname:
-			testfile.write(str(name)+'\n')
+		# for name in functionname:
+		# 	testfile.write('$'+str(name)+'\n')
 		a_func=getFunctionBody(functionname,'a_file.c',tar)
 		b_func=getFunctionBody(functionname,'b_file.c',tar)
 		for i in range(functionname.__len__()):
