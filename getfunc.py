@@ -36,7 +36,7 @@ def getFunctionBody(functionname,filename,folderpath):
 		result.append(filestr[begin:end])
 	return result
 def saveAsFile(name,func,folderpath):
-	with open(os.path.join(folderpath,name+'.txt'),'w') as f:
+	with open(os.path.join(folderpath,name+'.c'),'w') as f:
 		f.write(func)
 def islegal(path):
 	afile=False
@@ -52,9 +52,10 @@ def islegal(path):
 				diff=True
 	return (afile and bfile and diff)
 def getTargetFolder(path):
+#get all diff path from root path
 	result=[]
-	for f in os.listdir(config['path']['output']):
-		path1=os.path.join(config['path']['output'],f)
+	for f in os.listdir(config['path']['output_diff']):
+		path1=os.path.join(config['path']['output_diff'],f)
 		for path2 in os.listdir(path1):
 			r=os.path.join(path1,path2)
 			if(islegal(r)):
@@ -64,14 +65,22 @@ if __name__=='__main__':
 	# testfile=open('/home/cosine/Desktop/filename.txt','a')
 	with open('./config.yml') as f:
 		config=yaml.load(f.read())
-	targetfolder=getTargetFolder(config['path']['output'])
-	for tar in targetfolder:
-		functionname=getFuncionName(tar)
+	difffolder=getTargetFolder(config['path']['output_diff'])
+	goodFunctionFolder=config['path']['output_goodfunction']
+	bedFunctionFolder=config['path']['output_bedfunction']
+	if not os.path.exists(goodFunctionFolder):
+		os.mkdir(goodFunctionFolder)
+	if not os.path.exists(bedFunctionFolder):
+		os.mkdir(bedFunctionFolder)
+	for folder in difffolder:
+		functionname=getFuncionName(folder)
 		# for name in functionname:
 		# 	testfile.write('$'+str(name)+'\n')
-		a_func=getFunctionBody(functionname,'a_file.c',tar)
-		b_func=getFunctionBody(functionname,'b_file.c',tar)
+		a_func=getFunctionBody(functionname,'a_file.c',folder)
+		b_func=getFunctionBody(functionname,'b_file.c',folder)
 		for i in range(functionname.__len__()):
-			saveAsFile('a_'+re.split(r' ',functionname[i])[-1],a_func[i],tar)
-			saveAsFile('b_'+re.split(r' ',functionname[i])[-1],b_func[i],tar)
+			saveAsFile(re.split(r' ',functionname[i])[-1],
+				a_func[i],bedFunctionFolder)
+			saveAsFile(re.split(r' ',functionname[i])[-1],
+				b_func[i],goodFunctionFolder)
 	print('Done.')

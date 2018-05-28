@@ -81,7 +81,7 @@ if __name__=='__main__':
 	with open('./config.yml') as f:
 		config=yaml.load(f.read())
 	repo=Repo(config['path']['repo'])
-	diff_root=os.path.expanduser(config['path']['output'])
+	diff_root=os.path.expanduser(config['path']['output_diff'])
 	pattern=re.compile(config['keyword'])
 	date_from=datetime.strptime(str(config['time']['from']),'%Y-%m-%d')
 	date_to=datetime.strptime(str(config['time']['to']),'%Y-%m-%d')
