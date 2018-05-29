@@ -1,19 +1,17 @@
 path:
-  repo: /home/cosine/mygit/linux    #repo path
-  output_diff: /home/cosine/cveresult/diff  #output folder path
-  output_goodfunction: /home/cosine/cveresult/goodfunction
-  output_bedfunction: /home/cosine/cveresult/bedfunction
+  repo: /home/cosine/mygit/linux #repo path
+  output : /home/cosine/linuxreslut
 #select keywords in commit descirption
 keyword: 'CVE-'
 #limit the time range of commit
 time:
   from: 2010-01-01
-  to: 2018-05-17
+  to: 2018-05-29
 #the files need to save
 savefile:
   diff: True   #diff file
-  a_file: True   #the file unpatched
-  b_file: True   #the file patched
+  good_file: True   #the file unpatched
+  bed_file: True   #the file patched
   description: True   #description about the commit
   keeptype: True   #Weather you want to keep the type of file patched 
 #filter the commit

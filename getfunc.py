@@ -44,9 +44,9 @@ def islegal(path):
 	diff=False
 	for root,dirs,files in os.walk(path):
 		for f in files:
-			if(f=='a_file.c'):
+			if(f=='good_file.c'):
 				afile=True
-			if(f=='b_file.c'):
+			if(f=='bed_file.c'):
 				bfile=True
 			if(re.split('\.',f)[0]=='diff'):
 				diff=True
@@ -54,8 +54,9 @@ def islegal(path):
 def getTargetFolder(path):
 #get all diff path from root path
 	result=[]
-	for f in os.listdir(config['path']['output_diff']):
-		path1=os.path.join(config['path']['output_diff'],f)
+	repopath=os.path.join(config['path']['output'],'diff')
+	for f in os.listdir(repopath):
+		path1=os.path.join(repopath,f)
 		for path2 in os.listdir(path1):
 			r=os.path.join(path1,path2)
 			if(islegal(r)):
@@ -65,9 +66,9 @@ if __name__=='__main__':
 	# testfile=open('/home/cosine/Desktop/filename.txt','a')
 	with open('./config.yml') as f:
 		config=yaml.load(f.read())
-	difffolder=getTargetFolder(config['path']['output_diff'])
-	goodFunctionFolder=config['path']['output_goodfunction']
-	bedFunctionFolder=config['path']['output_bedfunction']
+	difffolder=getTargetFolder(os.path.join(config['path']['output'],'_diff'))
+	goodFunctionFolder=os.path.join(config['path']['output'],'goodfunction')
+	bedFunctionFolder=os.path.join(config['path']['output'],'bedfunction')
 	if not os.path.exists(goodFunctionFolder):
 		os.mkdir(goodFunctionFolder)
 	if not os.path.exists(bedFunctionFolder):
@@ -76,11 +77,11 @@ if __name__=='__main__':
 		functionname=getFuncionName(folder)
 		# for name in functionname:
 		# 	testfile.write('$'+str(name)+'\n')
-		a_func=getFunctionBody(functionname,'a_file.c',folder)
-		b_func=getFunctionBody(functionname,'b_file.c',folder)
+		good_func=getFunctionBody(functionname,'good_file.c',folder)
+		bed_func=getFunctionBody(functionname,'bed_file.c',folder)
 		for i in range(functionname.__len__()):
 			saveAsFile(re.split(r' ',functionname[i])[-1],
-				a_func[i],bedFunctionFolder)
+				good_func[i],goodFunctionFolder)
 			saveAsFile(re.split(r' ',functionname[i])[-1],
-				b_func[i],goodFunctionFolder)
+				bed_func[i],bedFunctionFolder)
 	print('Done.')

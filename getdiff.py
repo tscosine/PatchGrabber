@@ -6,7 +6,9 @@ import json
 import yaml
 def cvestr(cvemessage):
 	cvemessage=list(set(cvemessage))
-	result=cvemessage[0]
+	result=[]
+	if cvemessage.__len__()>0:
+		result=cvemessage[0]
 	for i in range(1,cvemessage.__len__()-1):
 		result+=','
 		result+=cvemessage[i]
@@ -35,12 +37,10 @@ def save_commit(commit):
 	elif len(parents)==1:
 		after=parents[0]
 	diffs=commit.diff(after,create_patch=True)
-
 	#print('get '+str(diffs.__len__())+' diffs')
 	if diffs.__len__()>config['filter']['maxdiffsnum']:
 		print('diffs ignored!')
 		return
-
 	diffs_folder_path = os.path.join(diff_root,commit.hexsha)
 	if not os.path.exists(diffs_folder_path):
 		os.makedirs(diffs_folder_path)
@@ -58,30 +58,31 @@ def save_commit(commit):
 		if(config['savefile']['description']):
 			with open(os.path.join(diff_folder, 'description.txt'), 'w') as f:
 				f.write(json.dumps(getdescription(commit), indent=4))
-		if(config['savefile']['a_file']):
+		if(config['savefile']['good_file']):
 			if(diff.a_path!=None):
 				filetype='.'+diff.a_path.split('.')[-1]
 				if(filetype.__len__()>4):
 					filetype=''
 				if(not config['savefile']['keeptype']):
 					filetype='.txt'
-				with open(os.path.join(diff_folder,'a_file'+filetype),'w') as f:
+				with open(os.path.join(diff_folder,'good_file'+filetype),'w') as f:
 					f.write(getfiledata(commit,diff.a_path))
-		if(config['savefile']['b_file']):
+		if(config['savefile']['bed_file']):
 			if(diff.b_path!=None):
 				filetype='.'+diff.b_path.split('.')[-1]
 				if(filetype.__len__()>4):
 					filetype=''
 				if(not config['savefile']['keeptype']):
 					filetype='.txt'
-				with open(os.path.join(diff_folder,'b_file'+filetype),'w') as f:
+				with open(os.path.join(diff_folder,'bed_file'+filetype),'w') as f:
 					f.write(getfiledata(after,diff.b_path))
 
 if __name__=='__main__':
 	with open('./config.yml') as f:
 		config=yaml.load(f.read())
 	repo=Repo(config['path']['repo'])
-	diff_root=os.path.expanduser(config['path']['output_diff'])
+	diff_root=os.path.expanduser(
+		os.path.join(config['path']['output'],'diff'))
 	pattern=re.compile(config['keyword'])
 	date_from=datetime.strptime(str(config['time']['from']),'%Y-%m-%d')
 	date_to=datetime.strptime(str(config['time']['to']),'%Y-%m-%d')
@@ -90,6 +91,8 @@ if __name__=='__main__':
 	count=0
 	while flag:
 		commits=list(repo.iter_commits('master',max_count=pagesize,skip=count))
+		# if(commits.__len__()<pagesize):
+		# 	flag=False
 		count+=pagesize
 		for commit in commits:
 			if(re.search(pattern,commit.message)):
@@ -102,4 +105,4 @@ if __name__=='__main__':
 				else:
 					print('get commits:'+str(commit.hexsha)+'\n'+str(commit.summary)+'\n'+str(commit_date))
 					save_commit(commit)
-					print('')		
+					print('')	
