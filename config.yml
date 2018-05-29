@@ -1,6 +1,6 @@
 path:
   repo: /home/cosine/mygit/linux #repo path
-  output : /home/cosine/linuxreslut
+  output : /home/cosine/linuxresult
 #select keywords in commit descirption
 keyword: 'CVE-'
 #limit the time range of commit

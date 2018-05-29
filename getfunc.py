@@ -1,24 +1,24 @@
 import re
 import os
 import yaml
-
-def getName(function):
-	return re.split(r'\(|;',function)[0]
 def getFuncionName(folderpath):
 	pattern=re.compile(r'(?:static )?(?:inline )?(?:unsigned)?\w+ \*?\w+')
 	diffstr=open(os.path.join(folderpath,'diff.txt')).read()
-	function=re.split(r'@@ ',diffstr)
+	function=re.split(r'@@',diffstr)
 	functionname=[]
 	for f in function:
-		name = getName(f)
+		name = re.split(r'\(|;',f)[0]
+		name = name[re.search(r'\w',name).span()[0]:]
 		if(re.match(pattern,name) and not re.search(r'struct',name)):
-			functionname.append(getName(f))
+			functionname.append(name)
 	functionname=list(set(functionname))#remove the same name
 	return functionname
 def findFunctionEnd(begin,str):
 	i=begin
 	count=0
-	while i<str.__len__():
+	if str.__len__()<=begin or begin<0:
+		return begin
+	while i < str.__len__():
 		if(str[i]=='{'):
 			count+=1
 		elif(str[i]=='}'):
@@ -66,7 +66,7 @@ if __name__=='__main__':
 	# testfile=open('/home/cosine/Desktop/filename.txt','a')
 	with open('./config.yml') as f:
 		config=yaml.load(f.read())
-	difffolder=getTargetFolder(os.path.join(config['path']['output'],'_diff'))
+	difffolder=getTargetFolder(os.path.join(config['path']['output'],'diff'))
 	goodFunctionFolder=os.path.join(config['path']['output'],'goodfunction')
 	bedFunctionFolder=os.path.join(config['path']['output'],'bedfunction')
 	if not os.path.exists(goodFunctionFolder):
@@ -74,7 +74,11 @@ if __name__=='__main__':
 	if not os.path.exists(bedFunctionFolder):
 		os.mkdir(bedFunctionFolder)
 	for folder in difffolder:
+		print('serach folder:'+str(folder))
 		functionname=getFuncionName(folder)
+		print('getfunction name:')
+		for f in functionname:
+			print(f)
 		# for name in functionname:
 		# 	testfile.write('$'+str(name)+'\n')
 		good_func=getFunctionBody(functionname,'good_file.c',folder)

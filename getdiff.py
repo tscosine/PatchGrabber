@@ -14,9 +14,12 @@ def cvestr(cvemessage):
 		result+=cvemessage[i]
 	return result
 def getfiledata(commit,path):
-	tree=commit.tree
-	fnode=tree/path
-	return str(fnode.data_stream.read()).replace('\\n','\n').replace('\\t','\t')[3:-1]
+	if commit != None:
+		tree=commit.tree
+		fnode=tree/path
+		return str(fnode.data_stream.read()).replace('\\n','\n').replace('\\t','\t')
+	else:
+		return None
 def getdescription(commit):
 	cvemessage=re.findall(r'CVE-\d{4}-\d*',commit.message)
 	description = {
@@ -66,7 +69,9 @@ def save_commit(commit):
 				if(not config['savefile']['keeptype']):
 					filetype='.txt'
 				with open(os.path.join(diff_folder,'good_file'+filetype),'w') as f:
-					f.write(getfiledata(commit,diff.a_path))
+					filedata=getfiledata(commit,diff.a_path)
+					if filedata!=None:
+						f.write(filedata)
 		if(config['savefile']['bed_file']):
 			if(diff.b_path!=None):
 				filetype='.'+diff.b_path.split('.')[-1]
@@ -75,7 +80,9 @@ def save_commit(commit):
 				if(not config['savefile']['keeptype']):
 					filetype='.txt'
 				with open(os.path.join(diff_folder,'bed_file'+filetype),'w') as f:
-					f.write(getfiledata(after,diff.b_path))
+					filedata=getfiledata(after,diff.b_path)
+					if filedata!=None:
+						f.write(filedata)
 
 if __name__=='__main__':
 	with open('./config.yml') as f:
@@ -91,8 +98,8 @@ if __name__=='__main__':
 	count=0
 	while flag:
 		commits=list(repo.iter_commits('master',max_count=pagesize,skip=count))
-		# if(commits.__len__()<pagesize):
-		# 	flag=False
+		if(commits.__len__()<pagesize):
+			flag=False
 		count+=pagesize
 		for commit in commits:
 			if(re.search(pattern,commit.message)):
