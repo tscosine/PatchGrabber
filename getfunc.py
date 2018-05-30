@@ -68,11 +68,11 @@ if __name__=='__main__':
 		config=yaml.load(f.read())
 	difffolder=getTargetFolder(os.path.join(config['path']['output'],'diff'))
 	goodFunctionFolder=os.path.join(config['path']['output'],'goodfunction')
-	bedFunctionFolder=os.path.join(config['path']['output'],'bedfunction')
+	badFunctionFolder=os.path.join(config['path']['output'],'bedfunction')
 	if not os.path.exists(goodFunctionFolder):
 		os.mkdir(goodFunctionFolder)
-	if not os.path.exists(bedFunctionFolder):
-		os.mkdir(bedFunctionFolder)
+	if not os.path.exists(badFunctionFolder):
+		os.mkdir(badFunctionFolder)
 	for folder in difffolder:
 		print('serach folder:'+str(folder))
 		functionname=getFuncionName(folder)
@@ -87,5 +87,5 @@ if __name__=='__main__':
 			saveAsFile(re.split(r' ',functionname[i])[-1],
 				good_func[i],goodFunctionFolder)
 			saveAsFile(re.split(r' ',functionname[i])[-1],
-				bed_func[i],bedFunctionFolder)
+				bed_func[i],badFunctionFolder)
 	print('Done.')
