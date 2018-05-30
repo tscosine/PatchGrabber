@@ -11,7 +11,7 @@ time:
 savefile:
   diff: True   #diff file
   good_file: True   #the file unpatched
-  bed_file: True   #the file patched
+  bad_file: True   #the file patched
   description: True   #description about the commit
   keeptype: True   #Weather you want to keep the type of file patched 
 #filter the commit
