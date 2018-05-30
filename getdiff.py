@@ -72,14 +72,14 @@ def save_commit(commit):
 					filedata=getfiledata(commit,diff.a_path)
 					if filedata!=None:
 						f.write(filedata)
-		if(config['savefile']['bed_file']):
+		if(config['savefile']['bad_file']):
 			if(diff.b_path!=None):
 				filetype='.'+diff.b_path.split('.')[-1]
 				if(filetype.__len__()>4):
 					filetype=''
 				if(not config['savefile']['keeptype']):
 					filetype='.txt'
-				with open(os.path.join(diff_folder,'bed_file'+filetype),'w') as f:
+				with open(os.path.join(diff_folder,'bad_file'+filetype),'w') as f:
 					filedata=getfiledata(after,diff.b_path)
 					if filedata!=None:
 						f.write(filedata)

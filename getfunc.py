@@ -46,7 +46,7 @@ def islegal(path):
 		for f in files:
 			if(f=='good_file.c'):
 				afile=True
-			if(f=='bed_file.c'):
+			if(f=='bad_file.c'):
 				bfile=True
 			if(re.split('\.',f)[0]=='diff'):
 				diff=True
@@ -68,11 +68,11 @@ if __name__=='__main__':
 		config=yaml.load(f.read())
 	difffolder=getTargetFolder(os.path.join(config['path']['output'],'diff'))
 	goodFunctionFolder=os.path.join(config['path']['output'],'goodfunction')
-	bedFunctionFolder=os.path.join(config['path']['output'],'bedfunction')
+	badFunctionFolder=os.path.join(config['path']['output'],'badfunction')
 	if not os.path.exists(goodFunctionFolder):
 		os.mkdir(goodFunctionFolder)
-	if not os.path.exists(bedFunctionFolder):
-		os.mkdir(bedFunctionFolder)
+	if not os.path.exists(badFunctionFolder):
+		os.mkdir(badFunctionFolder)
 	for folder in difffolder:
 		print('serach folder:'+str(folder))
 		functionname=getFuncionName(folder)
@@ -82,10 +82,10 @@ if __name__=='__main__':
 		# for name in functionname:
 		# 	testfile.write('$'+str(name)+'\n')
 		good_func=getFunctionBody(functionname,'good_file.c',folder)
-		bed_func=getFunctionBody(functionname,'bed_file.c',folder)
+		bad_func=getFunctionBody(functionname,'bad_file.c',folder)
 		for i in range(functionname.__len__()):
 			saveAsFile(re.split(r' ',functionname[i])[-1],
 				good_func[i],goodFunctionFolder)
 			saveAsFile(re.split(r' ',functionname[i])[-1],
-				bed_func[i],bedFunctionFolder)
+				bad_func[i],badFunctionFolder)
 	print('Done.')
